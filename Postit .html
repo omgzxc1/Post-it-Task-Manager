@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Daily Task Organizer</title>
+</head>
+<body>
+
+  <!-- ───────────────────────────────────────────
+       HEADER  —  แถบด้านบนสุด (ตอนนี้ว่างไว้)
+  ─────────────────────────────────────────── -->
+  <header></header>
+
+  <!-- ───────────────────────────────────────────
+       MAIN LAYOUT  —  sidebar + board อยู่เคียงกัน
+  ─────────────────────────────────────────── -->
+  <div class="main-layout">
+
+    <!-- SIDEBAR  —  เมนูซ้ายมือ พับ/ขยายได้ -->
+    <div class="sidebar" id="sidebar">
+
+      <!-- ปุ่มพับ/ขยาย sidebar -->
+      <div class="sidebar-top">
+        <div class="sidebar-header">
+          <button id="sidebarToggle" class="sidebar-toggle">‹</button>
+        </div>
+
+        <!-- เมนูกรองสถานะ  |  data-filter จับคู่กับ class status-xxx บนการ์ด -->
+        <ul class="menu sidebar-content">
+          <li><button class="active" data-filter="all">All task</button></li>
+          <li><button data-filter="todo">To do</button></li>
+          <li><button data-filter="doing">Doing</button></li>
+          <li><button data-filter="done">Done</button></li>
+          <li><button data-filter="Not specified">Not specified</button></li>
+        </ul>
+      </div>
+
+      <!-- SETTINGS  —  popup ขึ้นเหนือปุ่มเมื่อกด -->
+      <div class="settings-wrapper sidebar-content">
+        <button class="settings" id="settingsBtn">settings</button>
+
+        <!-- Settings Panel  —  ซ่อนอยู่ (.hidden)  เปิด/ปิดด้วย JS -->
+        <div class="settings-panel hidden" id="settingsPanel">
+          <div class="settings-row">
+            <span class="settings-label">Dark Mode</span>
+            <!-- Toggle switch  —  เปลี่ยนสถานะด้วย checkbox -->
+            <label class="switch">
+              <input type="checkbox" id="darkModeSwitch">
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOARD  —  พื้นที่แสดงการ์ดงาน สร้างโดย JS -->
+    <main>
+      <div id="board"></div>
+    </main>
+
+  </div>
+
+  <!-- ───────────────────────────────────────────
+       FORM MODAL  —  ฟอร์มเพิ่มงานใหม่
+       ซ่อนอยู่ (.hidden)  เปิดด้วยปุ่ม +
+  ─────────────────────────────────────────── -->
+  <form id="formBox" class="hidden">
+    <h2>Add a new Task</h2>
+    <input id="nameInput"    type="text" placeholder="ลูกค้า...">
+    <input id="projectName"  type="text" placeholder="โปรเจค...">
+
+    <div class="date-group">
+      <label class="label">วันเริ่มงานและส่งงาน...</label>
+      <div class="date-inputs">
+        <input id="datestart" type="date">
+        <input id="deadline"  type="date">
+      </div>
+    </div>
+
+    <select id="statusInput">
+      <option value="todo">To do</option>
+      <option value="doing">Doing</option>
+      <option value="done">Done</option>
+      <option value="Not specified">Not specified</option>
+    </select>
+
+    <input id="detail" type="text" placeholder="รายละเอียด...">
+    <input id="reward" type="text" placeholder="ราคา...">
+
+    <button id="submitBtn" class="BtninformBox">บันทึก</button>
+    <button id="cancelBtn" class="BtninformBox">ยกเลิก</button>
+  </form>
+
+  <!-- ───────────────────────────────────────────
+       FLOATING BUTTON  —  ปุ่ม + มุมขวาล่าง เปิดฟอร์ม
+  ─────────────────────────────────────────── -->
+  <button id="add" class="add">+</button>
+
+  <!-- ───────────────────────────────────────────
+       WARNING BOX  —  แจ้งเตือนเมื่อกรอกข้อมูลไม่ครบ
+       ซ่อนอยู่ (display:none)  แสดง 3 วินาทีแล้วหาย
+  ─────────────────────────────────────────── -->
+  <div id="warningBox">กรุณากรอกข้อมูลให้ครบ</div>
+
+  <!-- ───────────────────────────────────────────
+       SCRIPT  —  โหลดหลังสุด (defer) เพื่อให้ DOM พร้อมก่อน
+  ─────────────────────────────────────────── -->
+  <script src="script.js" defer></script>
+
+</body>
+</html>
