@@ -1,0 +1,636 @@
+/* ============================================================
+   GLOBAL / BASE
+   — รีเซ็ต margin/padding และตั้งฟอนต์ + พื้นหลังหลัก
+============================================================ */
+
+body {
+  height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  padding: 0;
+  margin: 0;
+  background:
+    radial-gradient(circle at top, #ffffff 0%, transparent 60%),
+    linear-gradient(180deg, #f8f6f1, #efe8dc);
+  overflow: hidden;
+}
+
+h2 {
+  font-size: 22px;
+  color: #2f2829;
+  letter-spacing: -0.3px;
+  margin-top: 0;
+  margin-bottom: 5px;
+  font-weight: 700;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+  margin: 0;
+}
+
+/* ซ่อน element — ใช้คู่กับ JS .classList.add("hidden") */
+.hidden {
+  display: none !important;
+}
+
+
+/* ============================================================
+   LAYOUT
+   — header แถบบน + sidebar ซ้าย + main พื้นที่บอร์ด
+============================================================ */
+
+.main-layout {
+  display: flex;
+  height: calc(100vh - 80px); /* หักความสูง header ออก */
+}
+
+main {
+  flex: 1;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.4);
+  overflow-y: auto; /* scroll เฉพาะบอร์ด */
+}
+
+.sidebar {
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* ดันปุ่ม settings ไปล่างสุด */
+  width: 220px;
+  height: 100%;
+  background: linear-gradient(180deg, #F8E8D3 0%, #f4e6cf 100%);
+  box-sizing: border-box;
+  border-right: 1px solid rgba(47, 40, 41, 0.05);
+  transition: width 0.3s ease, padding 0.3s ease; /* animation พับ/ขยาย */
+}
+
+
+/* ============================================================
+   HEADER  —  แถบม่วงบนสุด
+============================================================ */
+
+header {
+  position: sticky;
+  top: 0;
+  height: 80px;
+  background: linear-gradient(135deg, #B09FCA 0%, #cbbfe3 50%, #F8E8D3 100%);
+  box-shadow: 0 4px 20px rgba(47, 40, 41, 0.08);
+  z-index: 10;
+}
+
+
+/* ============================================================
+   SIDEBAR COLLAPSE  —  พับ/ขยาย sidebar
+============================================================ */
+
+/* สถานะพับ: เหลือแค่ปุ่ม toggle */
+.sidebar.collapsed {
+  width: 52px;
+  padding: 20px 10px;
+}
+
+.sidebar.collapsed .sidebar-content {
+  display: none;
+}
+
+/* wrapper รวม toggle + menu ให้เป็น 1 flex child */
+.sidebar-top {
+  display: flex;
+  flex-direction: column;
+}
+
+/* แถว header ของ sidebar — วางปุ่ม toggle ชิดขวา */
+.sidebar-header {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  margin-bottom: 0;
+}
+
+/* ปุ่ม ‹ / › พับ/ขยาย */
+.sidebar-toggle {
+  background: rgba(47, 40, 41, 0.06);
+  border: none;
+  border-radius: 8px;
+  width: 30px;
+  height: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  color: #695a5b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.sidebar-toggle:hover {
+  background: rgba(47, 40, 41, 0.12);
+}
+
+
+/* ============================================================
+   MENU  —  ปุ่มกรองสถานะใน sidebar
+============================================================ */
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu button {
+  width: 100%;
+  text-align: left;
+  font-size: 16px;
+  border: none;
+  background: none;
+  padding: 10px 14px;
+  color: #695a5b;
+  font-weight: 600;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.menu button:hover {
+  background: rgba(47, 40, 41, 0.05);
+  color: #2f2829;
+  padding-left: 18px;
+}
+
+/* ปุ่มที่กำลัง active (filter ที่เลือกอยู่) */
+.menu button.active {
+  background: rgba(176, 159, 202, 0.2);
+  color: #554471;
+}
+
+
+/* ============================================================
+   SETTINGS BUTTON  —  ปุ่มล่างสุด sidebar
+============================================================ */
+
+.settings {
+  font-size: 16px;
+  border: none;
+  background: none;
+  padding: 10px 14px;
+  color: #7b5fa6;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.settings:hover {
+  background: rgba(123, 95, 166, 0.08);
+}
+
+
+/* ============================================================
+   SETTINGS PANEL  —  popup โผล่เหนือปุ่ม settings
+============================================================ */
+
+.settings-wrapper {
+  position: relative; /* anchor ให้ panel วาง absolute ได้ */
+}
+
+.settings-panel {
+  position: absolute;
+  bottom: calc(100% + 8px); /* โผล่เหนือปุ่ม 8px */
+  left: 0;
+  right: 0;
+  background: #fff8f2;
+  border: 1px solid rgba(47, 40, 41, 0.08);
+  border-radius: 14px;
+  padding: 14px;
+  box-shadow: 0 8px 24px rgba(47, 40, 41, 0.12);
+  z-index: 50;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.settings-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #2f2829;
+}
+
+
+/* ============================================================
+   TOGGLE SWITCH  —  สวิตช์ dark mode ใน settings panel
+============================================================ */
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 40px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+/* ซ่อน native checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* พื้นหลังสวิตช์ */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: rgba(47, 40, 41, 0.15);
+  border-radius: 22px;
+  transition: background 0.25s;
+}
+
+/* ลูกบอลสวิตช์ */
+.slider::before {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform 0.25s;
+}
+
+/* สถานะ checked → เลื่อนลูกบอล + เปลี่ยนสี */
+.switch input:checked + .slider            { background: #7b5fa6; }
+.switch input:checked + .slider::before   { transform: translateX(18px); }
+
+
+/* ============================================================
+   WARNING BOX  —  แจ้งเตือนมุมล่างซ้าย
+============================================================ */
+
+#warningBox {
+  position: fixed;
+  left: 30px;
+  bottom: 30px;
+  background: linear-gradient(135deg, #3f3350, #7a5f98);
+  color: #ffffff;
+  padding: 14px 24px;
+  border-radius: 14px;
+  box-shadow: 0 12px 30px rgba(63, 51, 80, 0.25);
+  display: none; /* JS จะเปิด/ปิด */
+  font-size: 14px;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  z-index: 999;
+}
+
+
+/* ============================================================
+   FLOATING ADD BUTTON  —  ปุ่ม + มุมขวาล่าง
+============================================================ */
+
+.add {
+  position: fixed;
+  right: 40px;
+  bottom: 40px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, #B09FCA, #8e78b6);
+  color: white;
+  font-size: 28px;
+  font-weight: 300;
+  box-shadow: 0 8px 25px rgba(142, 120, 182, 0.4);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 90;
+}
+
+.add:hover {
+  transform: scale(1.1) rotate(90deg);
+  box-shadow: 0 12px 28px rgba(142, 120, 182, 0.5);
+}
+
+
+/* ============================================================
+   FORM MODAL  —  glassmorphism popup กลางจอ
+============================================================ */
+
+#formBox {
+  width: 320px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 30px 24px;
+  background: rgba(196, 182, 218, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 24px;
+  gap: 14px;
+  box-shadow: 0 30px 60px rgba(47, 40, 41, 0.2);
+  animation: popup 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  z-index: 100;
+}
+
+
+/* ============================================================
+   INPUTS  —  ช่องกรอกข้อมูลในฟอร์ม
+============================================================ */
+
+#nameInput,
+#projectName,
+#datestart,
+#deadline,
+#statusInput,
+#detail,
+#reward {
+  width: 100%;
+  height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  outline: none;
+  padding: 0 14px;
+  border-radius: 12px;
+  background: #fff8f2;
+  color: #2f2829;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+#nameInput:focus,
+#projectName:focus,
+#datestart:focus,
+#deadline:focus,
+#statusInput:focus,
+#detail:focus,
+#reward:focus {
+  background: #ffffff;
+  border-color: #7b5fa6;
+  box-shadow: 0 0 0 4px rgba(123, 95, 166, 0.25);
+}
+
+/* วันที่ — วางสองช่องเคียงกัน */
+.date-group {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.date-inputs {
+  display: flex;
+  gap: 8px;
+}
+
+.date-inputs input {
+  flex: 1;
+}
+
+
+/* ============================================================
+   FORM BUTTONS  —  บันทึก / ยกเลิก
+============================================================ */
+
+#submitBtn {
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #2f2829, #4a3f42);
+  color: #F8E8D3;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(47, 40, 41, 0.2);
+  transition: all 0.2s ease;
+  margin-top: 5px;
+}
+
+#submitBtn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(47, 40, 41, 0.35);
+}
+
+#cancelBtn {
+  width: 100%;
+  height: 44px;
+  border: 1px solid rgba(47, 40, 41, 0.15);
+  border-radius: 12px;
+  background: #F8E8D3;
+  color: #2f2829;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+#cancelBtn:hover {
+  background: #fffbf5;
+  transform: translateY(-2px);
+}
+
+
+/* ============================================================
+   POST-IT CARD  —  การ์ดงานแต่ละใบบนบอร์ด
+============================================================ */
+
+.postIt {
+  position: relative;
+  background: #ffffff;
+  width: 260px;
+  padding: 24px;
+  border-radius: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 10px 30px rgba(47, 40, 41, 0.05);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-sizing: border-box;
+  border-left: 5px solid #B09FCA; /* แถบสีม่วงซ้าย */
+}
+
+.postIt:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(142, 120, 182, 0.12);
+}
+
+.postIt h1 {
+  color: #2f2829;
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 0;
+  margin-bottom: 12px;
+  line-height: 1.3;
+}
+
+.postIt p {
+  color: #6b6062;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  margin: 6px 0;
+  width: 100%;
+}
+
+
+/* ============================================================
+   BOARD  —  grid วางการ์ด (flex wrap)
+============================================================ */
+
+#board {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  padding: 30px;
+}
+
+
+/* ============================================================
+   DELETE BUTTON  —  ปุ่ม x มุมขวาบนการ์ด
+============================================================ */
+
+.deleteBtn {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50%;
+  font-size: 12px;
+  cursor: pointer;
+  color: #888;
+  background: rgba(0, 0, 0, 0.04);
+  transition: all 0.2s ease;
+}
+
+.deleteBtn:hover {
+  background: #ff5b5b;
+  color: white;
+  transform: scale(1.1);
+}
+
+
+/* ============================================================
+   LABEL  —  ป้ายกำกับช่องวันที่ในฟอร์ม
+============================================================ */
+
+.label {
+  font-size: 12px;
+  color: #554471;
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: block;
+}
+
+
+/* ============================================================
+   ANIMATION  —  popup เด้งเมื่อฟอร์มเปิด
+============================================================ */
+
+@keyframes popup {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -40%) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+
+/* ============================================================
+   DARK MODE  —  override สีทุก element เมื่อ body มี class .dark
+   ทุก rule ใน section นี้ต้องขึ้นต้นด้วย body.dark
+============================================================ */
+
+body.dark {
+  background:
+    radial-gradient(circle at top, #2a2535 0%, transparent 60%),
+    linear-gradient(180deg, #1a1723, #12101a);
+  color: #e8e0f0;
+}
+
+body.dark h2                        { color: #e8e0f0; }
+
+body.dark header                    { background: linear-gradient(135deg, #3b2f5e 0%, #4a3878 50%, #2a2040 100%); }
+
+body.dark .sidebar                  { background: linear-gradient(180deg, #2a2040 0%, #221a38 100%);
+                                      border-right-color: rgba(255, 255, 255, 0.06); }
+
+body.dark .sidebar-toggle           { background: rgba(255, 255, 255, 0.06); color: #c0b0d8; }
+body.dark .sidebar-toggle:hover     { background: rgba(255, 255, 255, 0.12); }
+
+body.dark .menu button              { color: #c0b0d8; }
+body.dark .menu button:hover        { background: rgba(255, 255, 255, 0.07); color: #e8e0f0; }
+body.dark .menu button.active       { background: rgba(176, 159, 202, 0.15); color: #c8b8e8; }
+
+body.dark .settings                 { color: #b89fd8; }
+body.dark .settings:hover           { background: rgba(176, 159, 202, 0.1); }
+
+body.dark .settings-panel          { background: #2a2040;
+                                      border-color: rgba(255, 255, 255, 0.08);
+                                      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3); }
+body.dark .settings-label          { color: #e8e0f0; }
+body.dark .slider                  { background: rgba(255, 255, 255, 0.15); }
+
+body.dark main                      { background-color: rgba(0, 0, 0, 0.2); }
+
+body.dark .postIt                   { background: #1e1a2e;
+                                      border-color: rgba(255, 255, 255, 0.06);
+                                      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+body.dark .postIt h1                { color: #e8e0f0; }
+body.dark .postIt p                 { color: #a89cc0; }
+
+body.dark .deleteBtn                { background: rgba(255, 255, 255, 0.06); color: #a89cc0; }
+
+body.dark #formBox                  { background: rgba(45, 35, 70, 0.92);
+                                      border-color: rgba(255, 255, 255, 0.12); }
+
+body.dark #nameInput,
+body.dark #projectName,
+body.dark #datestart,
+body.dark #deadline,
+body.dark #statusInput,
+body.dark #detail,
+body.dark #reward                   { background: #2a2040; color: #e8e0f0;
+                                      border-color: rgba(255, 255, 255, 0.1); }
+
+body.dark #nameInput:focus,
+body.dark #projectName:focus,
+body.dark #datestart:focus,
+body.dark #deadline:focus,
+body.dark #statusInput:focus,
+body.dark #detail:focus,
+body.dark #reward:focus             { background: #32284e; border-color: #9b7fd4;
+                                      box-shadow: 0 0 0 4px rgba(155, 127, 212, 0.2); }
+
+body.dark #cancelBtn                { background: #2a2040; color: #c0b0d8;
+                                      border-color: rgba(255, 255, 255, 0.1); }
+body.dark #cancelBtn:hover          { background: #32284e; }
+
+body.dark .label                    { color: #b89fd8; }
